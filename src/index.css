@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-white text-gray-900 font-sans antialiased;
+  }
+
+  /* Grid overlay pattern */
+  .grid-overlay {
+    background-image: 
+      linear-gradient(rgba(200,200,200,0.3) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,200,200,0.3) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* Hero background with layered gradient colors */
+.hero-bg {
+  background: linear-gradient(
+    135deg,
+    #f5f5f4,          /* soft warm gray */
+    #e7e5e4,          /* slightly deeper warm gray */
+    #ede9fe,          /* soft lavender (Tailwind's indigo-50) */
+    #f3e8ff,          /* very light violet (Tailwind's purple-50) */
+    #fff              /* white for blending */
+  );
+  background-size: 400% 400%;
+  animation: gradient-shift 12s ease-in-out infinite;
+}
+}
+
+@layer utilities {
+  /* Typography utilities */
+  .text-display {
+    @apply text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight;
+  }
+  
+  .text-lead {
+    @apply text-lg md:text-xl text-gray-500 leading-relaxed;
+  }
+
+  /* Animation for background */
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  /* Fade in animation */
+  .animate-fade-in {
+    animation: fade-in 0.8s ease-out forwards;
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
