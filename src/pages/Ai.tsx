@@ -9,6 +9,24 @@ interface AnimatedLineProps {
   isActive: boolean;
   delay?: number;
 }
+const ParticleField = () => {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {[...Array(20)].map((_, i) => (
+        <div
+          key={i}
+          className="absolute w-1 h-1 bg-white rounded-full opacity-60 animate-twinkle"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 3}s`,
+            animationDuration: `${2 + Math.random() * 3}s`
+          }}
+        />
+      ))}
+    </div>
+  );
+};
 
 const AnimatedLine: React.FC<AnimatedLineProps> = ({
   containerRef,
@@ -481,7 +499,7 @@ const ProjectShowcase: React.FC = () => {
     },
     {
       icon: BarChart3,
-      title: "Green Gauge™ – ESG Reporting & Sustainability",
+      title: "Green Stat – ESG Reporting & Sustainability",
       description: "Comprehensive ESG platform for automated reporting, compliance, and sustainability metrics with audit-ready documentation.",
       features: [
         "Automated ESV report generation from live data streams",
@@ -543,7 +561,8 @@ const ProjectShowcase: React.FC = () => {
   }, [cardRefs]);
 
   return (
-    <section className="min-h-screen flex items-center hero-bg">
+    <section className="relative min-h-screen flex items-center hero-bg overflow-visible">
+      <ParticleField />
       <div className="absolute inset-0 grid-overlay opacity-60" />
       <div className="max-w-7xl mx-auto">
         <motion.div

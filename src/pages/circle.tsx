@@ -1,10 +1,10 @@
 import React, { useRef, useState, useEffect, useId, RefObject, ForwardRefExoticComponent, SVGProps } from 'react';
-import { Brain, MessageSquare, Image, Code, Mic, BarChart3, FileText, Shield, Sparkles } from 'lucide-react';
+import { Brain, MessageSquare, Image, Code, Mic, BarChart3, FileText, Shield, Sparkles, ChevronDown } from 'lucide-react';
 
 interface AnimatedBeamProps {
-  containerRef: RefObject<HTMLDivElement>;
-  fromRef: RefObject<HTMLDivElement>;
-  toRef: RefObject<HTMLDivElement>;
+  containerRef: RefObject<HTMLDivElement | null>;
+  fromRef: RefObject<HTMLDivElement | null>;
+  toRef: RefObject<HTMLDivElement | null>;
   curvature?: number;
   reverse?: boolean;
   duration?: number;
@@ -167,7 +167,7 @@ const AnimatedBeam: React.FC<AnimatedBeamProps> = ({
         }}
       />
       
-      <style >{`
+      <style>{`
         @keyframes beam-flow-${index} {
           0% {
             stroke-dashoffset: 30;
@@ -230,7 +230,6 @@ const ProductNode = React.forwardRef<HTMLDivElement, ProductNodeProps>(
           <h3 className="mb-2 text-center font-semibold text-gray-800">{title}</h3>
           <p className="text-center text-sm text-gray-600 leading-relaxed">{description}</p>
           
-          {/* Glow effect overlay */}
           <div 
             className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/10 to-purple-600/10 transition-opacity duration-300"
             style={{
@@ -239,7 +238,7 @@ const ProductNode = React.forwardRef<HTMLDivElement, ProductNodeProps>(
           />
         </div>
         
-        <style >{`
+        <style>{`
           @keyframes fadeInScale {
             0% {
               opacity: 0;
@@ -256,7 +255,7 @@ const ProductNode = React.forwardRef<HTMLDivElement, ProductNodeProps>(
   }
 );
 
-const CentralHub = React.forwardRef<HTMLDivElement>((_ , ref) => (
+const CentralHub = React.forwardRef<HTMLDivElement>((_, ref) => (
   <div
     ref={ref}
     className="relative z-20"
@@ -312,6 +311,18 @@ const AIProductsSection: React.FC = () => {
   const [nodeRefs] = useState(() =>
     Array.from({ length: 8 }, () => React.createRef<HTMLDivElement>())
   );
+  const [isMobile, setIsMobile] = useState(false);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const products: Product[] = [
     {
@@ -364,34 +375,86 @@ const AIProductsSection: React.FC = () => {
     },
   ];
 
+  if (isMobile) {
+    return (
+      <section className="relative py-12 px-4">
+        <style>{`
+          .hero-bg {
+            background: radial-gradient(circle at center, #f9fafb, #e5e7eb);
+          }
+        `}</style>
+        <div className="hero-bg absolute inset-0 opacity-90" />
+        <div className="max-w-md mx-auto relative">
+          <div className="text-center mb-12">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
+              Our Services
+            </h1>
+            <p className="text-gray-600 leading-relaxed">
+              Discover our comprehensive suite of AI-powered solutions.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {products.map((product, index) => (
+              <div 
+                key={index}
+                className={`rounded-2xl border-2 bg-white p-5 shadow-sm transition-all ${product.color} ${
+                  expandedIndex === index ? 'ring-2 ring-indigo-500' : ''
+                }`}
+                onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
+              >
+                <div className="flex items-center">
+                  <div className="mr-4 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 p-2">
+                    <product.icon width={20} height={20} className="text-white" />
+                  </div>
+                  <h3 className="font-semibold text-gray-800 flex-grow">{product.title}</h3>
+                  <ChevronDown 
+                    className={`transition-transform ${expandedIndex === index ? 'rotate-180' : ''}`}
+                    width={18}
+                  />
+                </div>
+                
+                {expandedIndex === index && (
+                  <p className="mt-3 pl-11 text-sm text-gray-600">{product.description}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden hero-bg">
-      {/* Grid overlay */}
+    <section className="relative min-h-screen flex items-center overflow-visible hero-bg">
+      <style>{`
+        .hero-bg {
+          background: radial-gradient(circle at center, #f9fafb, #e5e7eb);
+        }
+        .grid-overlay {
+          background-image: 
+            linear-gradient(to right, rgba(0,0,0,0.03) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(0,0,0,0.03) 1px, transparent 1px);
+          background-size: 40px 40px;
+        }
+      `}</style>
+      <div className="hero-bg absolute inset-0" />
       <div className="absolute inset-0 grid-overlay opacity-60" />
       <div className="max-w-7xl mx-auto relative">
-        {/* Header */}
-        <div 
-          className="text-center mb-20"
-          style={{
-            animation: 'fadeInUp 0.8s ease-out both',
-          }}
-        >
+        <div className="text-center mb-20">
           <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">
-            Our Products
+            Our Services
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Discover our comprehensive suite of AI-powered solutions designed to transform your business operations and drive innovation across every aspect of your organization.
+            Discover our comprehensive suite of AI-powered solutions designed to transform your business.
           </p>
         </div>
 
-        {/* Products Circle with Animated Beams */}
         <div ref={containerRef} className="relative min-h-[800px] w-full">
-          {/* Central Hub */}
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <CentralHub ref={hubRef} />
           </div>
 
-          {/* Product Nodes in a Circle */}
           {products.map((product, index) => {
             const angle = (index / products.length) * 2 * Math.PI - Math.PI / 2;
             const radius = 320;
@@ -421,13 +484,12 @@ const AIProductsSection: React.FC = () => {
             );
           })}
 
-          {/* Animated Beams */}
           {nodeRefs.map((nodeRef, index) => (
             <AnimatedBeam
               key={index}
-              containerRef={containerRef as React.RefObject<HTMLDivElement>}
-              fromRef={hubRef as React.RefObject<HTMLDivElement>}
-              toRef={nodeRef as React.RefObject<HTMLDivElement>}
+              containerRef={containerRef}
+              fromRef={hubRef}
+              toRef={nodeRef}
               curvature={30}
               delay={1.5 + index * 0.3}
               duration={2.5}
@@ -437,29 +499,7 @@ const AIProductsSection: React.FC = () => {
             />
           ))}
         </div>
-
-        {/* CTA Section */}
-        <div 
-          className="text-center mt-20"
-          style={{
-            animation: 'fadeInUp 0.8s ease-out 2s both',
-          }}
-        >
-        </div>
       </div>
-      
-      <style >{`
-        @keyframes fadeInUp {
-          0% {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
     </section>
   );
 };

@@ -112,7 +112,7 @@ export default function AboutUs() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center text-white px-6 lg:px-16 py-24 overflow-hidden">
+      <section className="relative min-h-screen flex items-center justify-center text-white px-6 lg:px-16 py-24 overflow-visible">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(120,119,198,0.3),transparent_50%)]" />
         
         <div className="relative z-10 max-w-4xl text-center">
